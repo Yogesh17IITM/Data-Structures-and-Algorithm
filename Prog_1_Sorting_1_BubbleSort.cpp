@@ -51,9 +51,12 @@ void Sort_using_BubbleSort(int iarr[], int iSize)
 
 void swap(int * ipA, int * ipB)
 {
-    *ipA = *ipA + *ipB;
-    *ipB = *ipA - *ipB;
-    *ipA = *ipA - *ipB;
+    if (ipA && ipB)
+    {
+        *ipA = *ipA + *ipB;
+        *ipB = *ipA - *ipB;
+        *ipA = *ipA - *ipB;
+    }
 }
 
 void PrintArray(int iArr[], int iSize)
