@@ -1,4 +1,5 @@
-/* Print cousins of given node in Binary Tree */
+/* Print cousins of given node in Binary Tree using 
+   Breadth First Search (BFS) */
 
 #include<iostream>
 #include<queue>

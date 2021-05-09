@@ -1,3 +1,6 @@
+/* Find the given element in a BST (Binary Search Tree) 
+   using DFS (Depth First Search) */
+
 #include<iostream>
 using namespace std;
 
