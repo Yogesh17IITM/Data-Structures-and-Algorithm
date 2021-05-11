@@ -1,5 +1,18 @@
-/* Finding shortest path in an unweighted graph 
-   using BFS */
+/* 
+	Finding shortest path in an unweighted graph 
+	using BFS 
+	      
+			1----0     7---- 6
+			|	 |   / |   / |
+			|	 |  /  |  /  |
+			2	 3 /___4 /---5
+
+	Source: 0
+	Destination: 7
+
+	Find the shorted path b/w source and destination:
+	Shortest Path: 0 -- 3 -- 5	
+*/
 
 #include<iostream>
 #include<vector>
@@ -12,122 +25,136 @@ public:
 	Graph(int iVertices);
 	~Graph();
 
-	void AddEdge(int u, int v);
-	int FindShortestPath(int iSource, int iDestination);
-	bool ModifiedBFS(int iSource, int iDestination);
+	void AddEdges(int u, int v);
+	bool BFS(int iSource, int iDestination);
+
+	int FindShortestPathUsingBFS(int iSource, int iDestination);
 
 private:
-	vector<int>* _Adj;
 	int _NbVertices;
-	
-	int* _Predecessor;
-	int* _distance;
+	vector<int>* _pAdj;
+
+	int* _pShortestDistance;
+	int* _pPreceedingNode;
 };
 
 Graph::Graph(int iVertices) : _NbVertices(iVertices)
 {
-	_Adj = new vector<int>[_NbVertices];
-	_Predecessor = new int[_NbVertices];
-	_distance = new int[_NbVertices];
+	_pAdj = new vector<int>[_NbVertices];
+	_pShortestDistance = new int[_NbVertices];
+	_pPreceedingNode = new int[_NbVertices];
+
+	for (int idx = 0; idx < _NbVertices; idx++)
+	{
+		_pShortestDistance[idx] = 0;
+		_pPreceedingNode[idx] = -1;
+	}
 }
 
 Graph::~Graph()
 {
 }
 
-void Graph::AddEdge(int u, int v)
+void Graph::AddEdges(int u, int v)
 {
-	_Adj[u].push_back(v);
-	_Adj[v].push_back(u);
+	_pAdj[u].push_back(v);
+	_pAdj[v].push_back(u);
 }
 
-bool Graph::ModifiedBFS(int iSource, int iDestination)
+// Time Complexity: O(V + E)
+// where V: Vertices and E: Edges
+bool Graph::BFS(int iSource, int iDestination)
 {
-	queue<int> q;
 	bool* bIsVisited = new bool[_NbVertices];
-
-	// Initialize all variables
 	for (int idx = 0; idx < _NbVertices; idx++)
-	{
 		bIsVisited[idx] = false;
-		_Predecessor[idx] = -1;
-		_distance[idx] = INT_MAX;
-	}
-	
-	bIsVisited[iSource] = true;
-	_distance[iSource] = 0;
-	q.push(iSource);
 
-	// Standard BFS
+	bIsVisited[iSource] = true;
+	_pShortestDistance[iSource] = 0;
+
+	queue<int> q;
+	q.push(iSource);
 	while (!q.empty())
 	{
-		int u = q.front();
-		q.pop();
-
-		// Traversing to adject nodes (using BFS).
-		for (auto & iCurrVertex : _Adj[u])
+		int size = q.size();
+		while (size)
 		{
-			if (!bIsVisited[iCurrVertex])
-			{
-				bIsVisited[iCurrVertex] = true;
-				q.push(iCurrVertex);
-				_distance[iCurrVertex] = _distance[u] + 1;
-				_Predecessor[iCurrVertex] = u;
+			int temp = q.front();
+			q.pop();
 
-				if (iCurrVertex == iDestination)
+			for (auto & iAdjNode: _pAdj[temp])
+			{
+				if (!bIsVisited[iAdjNode])
 				{
-					return true;
+					bIsVisited[iAdjNode] = true;
+					q.push(iAdjNode);
+
+					_pShortestDistance[iAdjNode] = _pShortestDistance[temp] + 1;
+					_pPreceedingNode[iAdjNode] = temp;
+
+					if (iAdjNode == iDestination)
+					{
+						return true;
+					}
 				}
 			}
+
+			size--;
 		}
 	}
 	return false;
 }
 
-int Graph::FindShortestPath(int iSource, int iDestination)
-{	
-	if (false == ModifiedBFS(iSource, iDestination))
+int Graph::FindShortestPathUsingBFS(int iSource, int iDestination)
+{
+	int oShortestDistance = 0;
+	if (BFS(iSource, iDestination))
 	{
-		cout << "Source and destination is not connected" << endl;
+		oShortestDistance = _pShortestDistance[iDestination];
+		cout << "Shortest Path: ";
+
+		vector<int> vPath;
+		vPath.push_back(iDestination);
+
+		int temp = _pPreceedingNode[iDestination];		
+		while (temp != -1)
+		{			
+			vPath.push_back(temp);
+			temp = _pPreceedingNode[temp];
+		}
+
+		for (int idx = vPath.size()-1; idx >=0; idx--)
+		{
+			cout << vPath[idx] << " ";
+		}
+		cout << endl;
 	}
-
-	vector<int> Path;
-
-	int temp = iDestination;
-	Path.push_back(temp);
-	while (_Predecessor[temp] != -1)
+	else
 	{
-		Path.push_back(_Predecessor[temp]);
-		temp = _Predecessor[temp];
+		cout << "Source and Destination nodes are NOT connected" << endl;
 	}
-
-	for (int idx=Path.size()-1; idx>=0; idx--)
-	{
-		cout << Path[idx] << " ";
-	}
-	cout << endl;
-
-	return _distance[iDestination];
+	return oShortestDistance;
 }
 
 int main()
 {
-	Graph g(8);
-	g.AddEdge(0, 1);
-	g.AddEdge(0, 3);
-	g.AddEdge(1, 2);
-	g.AddEdge(3, 4);
-	g.AddEdge(3, 7);
-	g.AddEdge(4, 5);
-	g.AddEdge(4, 6);
-	g.AddEdge(4, 7);
-	g.AddEdge(5, 6);
-	g.AddEdge(6, 7);
+	Graph Obj(8);
+	Obj.AddEdges(0, 1);
+	Obj.AddEdges(0, 3);
+	Obj.AddEdges(1, 2);
+	Obj.AddEdges(3, 4);
+	Obj.AddEdges(3, 7);
+	Obj.AddEdges(4, 5);
+	Obj.AddEdges(4, 6);
+	Obj.AddEdges(4, 7);
+	Obj.AddEdges(5, 6);
+	Obj.AddEdges(6, 7);
 
-	int Source = 0;
-	int Destination = 7;
+	int Source = 4;
+	int Destination = 5;
 
-	cout << g.FindShortestPath(Source, Destination) << endl;
+	// Finding Shortest Path
+	cout << Obj.FindShortestPathUsingBFS(Source, Destination) << endl;
 
 	return 0;
 }
