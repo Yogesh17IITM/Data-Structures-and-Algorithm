@@ -1,4 +1,20 @@
-/* Finding longest path in a undirected tree using BFS */
+/* 
+    Finding longest path in a undirected tree using BFS 
+
+        0
+	   /
+	  1
+	 / \
+ 9--2	6 -- 8
+   / \   \
+  4   3   7
+   \
+    5
+
+Output: 
+    5 4 2 1 6 7 
+    (Longest path is from 5 to 7 and distance 5)
+*/
 
 #include<iostream>
 #include<vector>
@@ -99,6 +115,8 @@ int Graph::FindLongestPath(int iSource)
 int main()
 {
 	Graph obj(10);
+
+    // 1. Create Graph with Nodes 
 	obj.AddEdges(0, 1);
 	obj.AddEdges(1, 2);
 	obj.AddEdges(2, 3);
@@ -109,6 +127,7 @@ int main()
 	obj.AddEdges(6, 7);
 	obj.AddEdges(6, 8);
 
+    // 2. Find the longest path using BFS twice
 	obj.FindLongestPath(0);
 	return 0;
 }
