@@ -1,5 +1,17 @@
-/* Print cousins of given node in Binary Tree using 
-   Breadth First Search (BFS) */
+/*
+ Print cousins of given node in Binary Tree using 
+ Breadth First Search (BFS) 
+
+ Input : root of below tree 
+             1
+           /   \
+          2     3
+        /   \  /  \
+       4    5  6   7
+       and pointer to a node say 5.
+
+ Output : 6, 7
+*/
 
 #include<iostream>
 #include<queue>
