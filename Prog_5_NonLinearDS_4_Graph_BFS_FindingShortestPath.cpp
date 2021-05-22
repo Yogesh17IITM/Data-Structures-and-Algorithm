@@ -11,7 +11,7 @@
 	Destination: 7
 
 	Find the shorted path b/w source and destination:
-	Shortest Path: 0 -- 3 -- 5	
+	Shortest Path: 0 -- 3 -- 7	
 */
 
 #include<iostream>
