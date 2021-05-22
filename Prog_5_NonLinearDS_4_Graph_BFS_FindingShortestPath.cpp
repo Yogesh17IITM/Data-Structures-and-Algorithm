@@ -150,8 +150,8 @@ int main()
 	Obj.AddEdges(5, 6);
 	Obj.AddEdges(6, 7);
 
-	int Source = 4;
-	int Destination = 5;
+	int Source = 0;
+	int Destination = 7;
 
 	// Finding Shortest Path
 	cout << Obj.FindShortestPathUsingBFS(Source, Destination) << endl;
