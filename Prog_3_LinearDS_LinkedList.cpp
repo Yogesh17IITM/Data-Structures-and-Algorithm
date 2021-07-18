@@ -3,41 +3,60 @@
 #include <iostream>
 using namespace std;
 
-class Node
-{    
-public:    
+struct Node
+{
     int _data;
     Node * _pNext;
-    Node(int idata) : _data(idata) {_pNext = NULL;};
+    Node(int idata) : _data(idata), _pNext(nullptr) {};
 };
 
 class LinkedList
 {   
-    public: 
-    Node * _phead = NULL;
+    Node * _pHead;
+    Node * _pTail;
     
-    void add(int idata)
+public: 
+    LinkedList() : _pHead(nullptr), _pTail(nullptr) {}
+ 
+    void CreateNode(int iData)
     {
-        if (NULL == _phead)      // if node is empty
+        if(nullptr == _pHead)
         {
-            _phead = new Node(idata);            
+            _pHead = _pTail = new Node(iData);
         }
-        else    // if node is not empty
+        else
         {
-            Node * pNewNode = new Node(idata);
-            // adding to the front;
-            pNewNode->_pNext = _phead;
-            _phead = pNewNode;
+            // Create a new node and update Tail node.
+            _pTail->_pNext = new Node(iData);
+            _pTail = _pTail->_pNext;
         }
-    }    
+    }
+
+    void PrintList()
+    {
+        Node * pNode = _pHead;
+        while(pNode != nullptr)
+        {
+            cout<<pNode->_data;
+            if(pNode->_pNext)
+                cout<<"->";
+
+            pNode = pNode->_pNext;
+        }
+        cout<<endl;
+    }
 };
 
 int main()
 {
-    LinkedList * pMyList = new LinkedList();
-    pMyList->add(1);
-    pMyList->add(45);
-    cout << pMyList->_phead->_data<<endl;
-    cout << pMyList->_phead->_pNext->_data<<endl;
+    LinkedList NodeList;
+
+    int Arr[] = {3, 45, 1, 32};
+    int nArr = sizeof(Arr)/sizeof(Arr[0]);
+
+    for(int idx=0; idx<nArr; idx++)
+        NodeList.CreateNode(Arr[idx]);
+    
+    NodeList.PrintList();    
     return 0;
 }
