@@ -1,26 +1,26 @@
-/* 
-Print 'K' sum paths in a Binary Tree 
+/*
+Print all k-sum paths in a binary tree using DFS
 
+Input : k = 5  
+        Root of below binary tree:
            1
         /     \
       3        -1
     /   \     /   \
-   2     1   4     5
-        /   / \     \
-       1   1   2     6
+   2     1   4     5                        
+        /   / \     \                    
+       1   1   2     6    
 
-Input : 
-    k = 5
+Output :
+3 2 
+3 1 1 
+1 3 1 
+4 1 
+1 -1 4 1 
+-1 4 2 
+5 
+1 -1 5 
 
-Output:
-    3 2
-    3 1 1
-    1 3 1
-    4 1
-    1 -1 4 1
-    -1 4 2
-    5
-    1 -1 5
 */
 
 #include<iostream>
@@ -30,73 +30,83 @@ using namespace std;
 struct Node
 {
     int _data;
-    Node* _pLeft, * _pRight;
-    Node(int iData) : _data(iData) 
-    {
-        _pLeft = nullptr;
-        _pRight = nullptr;
+    Node * _pLeft, * _pRight;
+    Node(int iData) : _data(iData),_pLeft(nullptr),_pRight(nullptr)
+    {        
     }
 };
 
-vector<int> vecPath;
-
-void PrintPath(const vector<int> & iVecPath, int iStartIdx)
+class Tree
 {
-    for (int idx = iStartIdx; idx < iVecPath.size(); idx++)
+    vector<int> _vPath;
+public:
+    Tree(){};
+    void CreateNode(Node *& ipNode, int iData);
+    void PrintPath(vector<int> vPath, int iStartIdx);
+    void PrintKSumPath(Node * ipRoot, int k);    
+};
+
+void Tree::CreateNode(Node *& ipNode, int iData)
+{
+    if(nullptr == ipNode)
     {
-        cout << iVecPath[idx] << " ";
+        ipNode = new Node(iData);
     }
-    cout << endl;
 }
 
-// Print all paths that have sum = k
-void PrintKSumPath(Node* ipNode, int iSum)
+void Tree::PrintPath(vector<int> vPath, int iStartIdx)
 {
-    if (!ipNode)
+    for(int idx=iStartIdx; idx<vPath.size(); idx++)
     {
+        cout << vPath[idx]<< " ";
+    }
+    cout<<endl;
+}
+
+// Time Complexity: O(n * h * h)
+// where n -> no. of nodes and h -> height of tree
+void Tree::PrintKSumPath(Node * ipRoot, int k)      
+{
+    if(!ipRoot)
         return;
+
+    // Inorder Traversal : DLR (Data-Left-Right)    // O(n)
+    _vPath.push_back(ipRoot->_data);
+    PrintKSumPath(ipRoot->_pLeft, k);
+    PrintKSumPath(ipRoot->_pRight, k);
+   
+    // Find the sum of paths
+    int sum = 0;
+    for(int idx = _vPath.size()-1; idx>=0; idx--)   // Max Space Complexity: O(h)
+    {
+        sum += _vPath[idx];
+        if(sum == k)
+            PrintPath(_vPath, idx);
     }
 
-    // Pre-Order Traversal
-    vecPath.push_back(ipNode->_data);
-    PrintKSumPath(ipNode->_pLeft, iSum);
-    PrintKSumPath(ipNode->_pRight, iSum);
-    //
-    
-    int CalcSum = 0;
-    for(int idx=vecPath.size()-1; idx>=0; idx--)
-    {
-        CalcSum += vecPath[idx];
-        if (CalcSum == iSum)
-        {
-            PrintPath(vecPath, idx);
-        }
-    }
-    vecPath.pop_back();
+    // Delete the node value at each last visit
+    _vPath.pop_back();
 }
 
 int main()
 {
-    Node* pNode = nullptr;
+    Tree obj;
+    Node * pRoot = nullptr;
+    
+    // Create Binary Tree
+    obj.CreateNode(pRoot, 1);
+    obj.CreateNode(pRoot->_pLeft, 3);
+    obj.CreateNode(pRoot->_pRight, -1);
+    obj.CreateNode(pRoot->_pLeft->_pLeft, 2);
+    obj.CreateNode(pRoot->_pLeft->_pRight, 1);
+    obj.CreateNode(pRoot->_pRight->_pLeft, 4);
+    obj.CreateNode(pRoot->_pRight->_pRight, 5);
+    obj.CreateNode(pRoot->_pLeft->_pRight->_pLeft, 1);
+    obj.CreateNode(pRoot->_pRight->_pLeft->_pLeft, 1);
+    obj.CreateNode(pRoot->_pRight->_pLeft->_pRight, 2);
+    obj.CreateNode(pRoot->_pRight->_pRight->_pRight, 6);
 
-    // Creating Tree
-    pNode = new Node(1);
-    // Level 1
-    pNode->_pLeft = new Node(3);
-    pNode->_pRight = new Node(-1);
-    // Level 2
-    pNode->_pLeft->_pLeft = new Node(2);
-    pNode->_pLeft->_pRight = new Node(1);    
-    pNode->_pRight->_pLeft = new Node(4);
-    pNode->_pRight->_pRight = new Node(5);
-    // Level 3
-    pNode->_pLeft->_pRight->_pLeft = new Node(1);
-    pNode->_pRight->_pLeft->_pLeft = new Node(1);
-    pNode->_pRight->_pLeft->_pRight = new Node(2);
-    pNode->_pRight->_pRight->_pRight = new Node(6);
+    obj.PrintKSumPath(pRoot, 5);
 
-    int Sum = 5;
-    PrintKSumPath(pNode, 5);
-
-	return 0;
+    return 0;
 }
