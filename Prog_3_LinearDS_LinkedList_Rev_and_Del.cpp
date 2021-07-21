@@ -10,6 +10,8 @@ Output: Linked list should be changed to,
 */
 
 #include<iostream>
+using namespace std;
+
 struct Node 
 {
     int _data;
