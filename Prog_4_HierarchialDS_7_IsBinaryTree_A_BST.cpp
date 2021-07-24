@@ -35,7 +35,7 @@ public:
         if(ipNode == nullptr)
             return true;
 
-        if((ipNode->_data <= iLeftData) || (ipNode->_data > iRightData))
+        if((ipNode->_data < iLeftData) || (ipNode->_data > iRightData))
             return false;
         
         return (IsBST(ipNode->_pLeft, iLeftData, ipNode->_data) 
