@@ -1,8 +1,8 @@
 /*
- Print cousins of given node in Binary Tree using 
- Breadth First Search (BFS) 
+ Print cousins of given node in Binary Tree using
+ Breadth First Search (BFS)
 
- Input : root of below tree 
+ Input : root of below tree
              1
            /   \
           2     3
@@ -13,93 +13,108 @@
  Output : 6, 7
 */
 
-#include<iostream>
-#include<queue>
+#include <iostream>
+#include <queue>
 using namespace std;
 
 struct Node
 {
-	int _data;
-	Node* pLeft, * pRight;
+    int _data;
+    // Create Left and Right Node -> Binary Tree
+    Node *_pLeft = nullptr;
+    Node *_pRight = nullptr;
+    Node(int iData) : _data(iData) {}
 };
 
-void CreateNode(Node *& opNode, int iVal)
+class BinaryTree
 {
-	opNode = new Node;
-	opNode->_data = iVal;
-	opNode->pLeft = nullptr;
-	opNode->pRight = nullptr;
+public:
+    void CreateNode(Node *&opNode, int iData);
+    void PrintCousinNodes(Node *pRootNode, Node *pNodeToFind);
+};
+
+void BinaryTree::CreateNode(Node *&opNode, int iData)
+{
+    if (nullptr == opNode)
+        opNode = new Node(iData);
 }
 
-void DisplayCousinNodes(Node * pRootNode, Node * pNodeToFind)
+void BinaryTree::PrintCousinNodes(Node *pRootNode, Node *pNodeToFind)
 {
-	if (pRootNode == pNodeToFind)
-	{
-		return;
-	}
-	
-	queue<Node*> q;
-	int size;
-	Node* p;
-		
-	q.push(pRootNode);
+    bool bIsCousinFound = false;
 
-	bool bIsFound = false;
-	
-	while (!q.empty() && !bIsFound)
-	{
-		size = q.size();			
-		while (size)
-		{			
-			p = q.front();
-			q.pop();
-			if ((p->pLeft == pNodeToFind) ||
-				(p->pRight == pNodeToFind))
-			{
-				bIsFound = true;
-			}
-			else
-			{
-				if (p->pLeft)
-					q.push(p->pLeft);
-				if (p->pRight)
-					q.push(p->pRight);
-			}
-			size--;
-		}		
-	}
+    /*
+    Handle case at Root Level:
+        case a) pRootNode == pNodeToFind
+        case b) pNodeToFind || pRootNode == nullptr
+    */
 
-	if (bIsFound)
-	{
-		size = q.size();
-		for (int idx = 0; idx < size; idx++)
-		{
-			p = q.front();
-			q.pop();
-			cout << p->_data << endl;
-		}
-	}
+    queue<Node *> q;
+    if (pRootNode && pNodeToFind && pRootNode != pNodeToFind) // Handling case (a) & (b)
+    {
+        q.push(pRootNode);
+        while (!q.empty() && !bIsCousinFound)
+        {
+            int size = q.size();
+            while (size)
+            {
+                Node *curr = q.front();
+                q.pop();
+
+                // Check if target node found at next level
+                if ((pNodeToFind == curr->_pLeft) || (pNodeToFind == curr->_pRight))
+                {
+                    bIsCousinFound = true;
+                }
+                else
+                {
+                    // Add Nodes of next level
+                    if (curr->_pLeft)
+                        q.push(curr->_pLeft);
+
+                    if (curr->_pRight)
+                        q.push(curr->_pRight);
+                }
+                size--;
+            }
+        }
+    }
+
+    if (bIsCousinFound && !q.empty())
+    {
+        while (!q.empty())
+        {
+            cout << q.front()->_data << " ";
+            q.pop();
+        }
+        cout << endl;
+    }
+    else
+    {
+        cout << "No Cousin Exists!" << endl;
+    }
 }
 
 int main()
 {
-	Node* pNode = nullptr;
-	CreateNode(pNode, 1);
-	if (pNode)
-	{
-		// Level 1
-		CreateNode(pNode->pLeft, 2);
-		CreateNode(pNode->pRight, 3);
+    Node *pRoot = nullptr;
+    BinaryTree t;
 
-		// Level 2 (left)
-		CreateNode(pNode->pLeft->pLeft, 4);
-		CreateNode(pNode->pLeft->pRight, 5);
+    t.CreateNode(pRoot, 1);
 
-		// Level 2 (right)
-		CreateNode(pNode->pRight->pLeft, 6);
-		CreateNode(pNode->pRight->pRight, 7);
+    // Level 1 (Left and Right node)
+    t.CreateNode(pRoot->_pLeft, 2);
+    t.CreateNode(pRoot->_pRight, 3);
 
-		DisplayCousinNodes(pNode, pNode->pLeft->pLeft);
-	}
-	return 0;
+    // Level 2 (left sub-tree)
+    t.CreateNode(pRoot->_pLeft->_pLeft, 4);
+    t.CreateNode(pRoot->_pLeft->_pRight, 5);
+
+    // Level 2 (right sub-tree)
+    t.CreateNode(pRoot->_pRight->_pLeft, 6);
+    t.CreateNode(pRoot->_pRight->_pRight, 7);
+
+    // Print Cousin Nodes
+    t.PrintCousinNodes(pRoot, pRoot->_pLeft->_pLeft);
+    return 0;
 }
