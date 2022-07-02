@@ -1,108 +1,138 @@
-/* Find the given element in a BST (Binary Search Tree) 
-   using DFS (Depth First Search) */
+/*
+Create a BST from the given array and search an element from the BST using DFS
 
-#include<iostream>
+Given array = { 50, 12, 1, 32, 11, 12, 4, 1 }
+Element to Search = 12
+
+Expected Output:
+    Elem 12 is at: 1
+
+Note: return '-1' if the element is NOT found
+*/
+
+#include <iostream>
 using namespace std;
+
+struct Node
+{
+    int _data;
+    int _Index;
+    Node *_pLeft = nullptr;
+    Node *_pRight = nullptr;
+    Node(int iData, int iIdx) : _data(iData), _Index(iIdx) {}
+};
 
 class BST
 {
-    int _data;
-    int _Idx;
-    BST * _pLeft;
-    BST* _pRight;
-public:
-    BST(int iData=0, int iIdx=0, BST *ipLeft=nullptr, BST* ipRight = nullptr) 
-        : _pLeft(ipLeft),_pRight(ipRight), _data(iData), _Idx(iIdx)
-    {
-    }
-    ~BST();
-        
-    BST * Insert(BST * pRoot, int iData, int iIdx);
-    void Inorder(BST * ipRoot);
+    static BST *_pBST;
+    BST(){};
 
-    bool FindElement(int & oIdx, BST* ipRoot, int iElementToSearch);
+public:
+    static BST *CreateInstance();
+
+    void InsertNode(Node *&ioNode, int iData, int iIdx);
+    int FindElement(int iKey, const Node *pNode); // return Idx
+    void Inorder(const Node *ipNode);
 };
 
-BST* BST::Insert(BST* pRoot, int iData, int iIdx)
-{    
-    if (nullptr == pRoot)
+// Initialize static variable
+BST *BST::_pBST = nullptr;
+
+// Singleton class - Only One object created.
+BST *BST::CreateInstance()
+{
+    if (nullptr == _pBST)
+        _pBST = new BST();
+    return _pBST;
+}
+
+void BST::Inorder(const Node *ipNode)
+{
+    if (nullptr == ipNode)
+        return;
+
+    // InOrder Traversal : LDR (result will be sorted)
+    Inorder(ipNode->_pLeft);
+    cout << ipNode->_Index << " " << ipNode->_data << endl;
+    Inorder(ipNode->_pRight);
+}
+
+int BST::FindElement(int iKey, const Node *pNode)
+{
+    int oIdx = -1;
+
+    if (pNode)
     {
-        // Create root node        
-        return new BST(iData, iIdx);
+        if (iKey == pNode->_data)
+        {
+            // Element found. Return the Idx.
+            oIdx = pNode->_Index;
+        }
+        else
+        {
+            // Check if the key exists in Left or Right Sub-tree
+            if (iKey < pNode->_data)
+            {
+                // Check if Key is in Left sub-tree
+                oIdx = FindElement(iKey, pNode->_pLeft);
+            }
+            else
+            {
+                // Check if Key is in Right sub-tree
+                oIdx = FindElement(iKey, pNode->_pRight);
+            }
+        }
     }
+    return oIdx;
+}
+
+void BST::InsertNode(Node *&ioNode, int iData, int iIdx)
+{
+    // Check if it Root Node
+    if (nullptr == ioNode)
+        ioNode = new Node(iData, iIdx);
     else
     {
-        // Create sub-nodes
-        if (iData > pRoot->_data)
+        // It is NOT a root node. Insert to Left or Right based on comparison
+        if (iData < ioNode->_data)
         {
-            // Create Right Node
-            pRoot->_pRight = Insert(pRoot->_pRight, iData, iIdx);
+            // Insert to Left
+            InsertNode(ioNode->_pLeft, iData, iIdx);
         }
         else
         {
-            pRoot->_pLeft = Insert(pRoot->_pLeft, iData, iIdx);
+            // Insert to Right
+            InsertNode(ioNode->_pRight, iData, iIdx);
         }
     }
-
-    return pRoot;
-}
-
-void BST::Inorder(BST * ipRoot)
-{
-    if (ipRoot)
-    {
-        Inorder(ipRoot->_pLeft);
-        cout << "Val: " << ipRoot->_data;
-        cout << " Idx: " << ipRoot->_Idx << endl;
-        Inorder(ipRoot->_pRight);
-    }
-}
-
-bool BST::FindElement(int & oIdx, BST* ipRoot, int iElementToSearch)
-{
-    bool obIsFound = false;
-    oIdx = -1;
-    if (ipRoot)
-    {
-        if (iElementToSearch == ipRoot->_data)
-        {
-            oIdx = ipRoot->_Idx;
-        }
-        else if (iElementToSearch > ipRoot->_data)
-        {
-            obIsFound = FindElement(oIdx, ipRoot->_pRight, iElementToSearch);
-        }
-        else
-        {
-            obIsFound = FindElement(oIdx, ipRoot->_pLeft, iElementToSearch);
-        }
-    }
-
-    return (oIdx!=-1) ? true: false;
 }
 
 int main()
 {
-    int arr[] = { 50, 12, 1, 32, 11, 12, 4, 1 };
+    // INPUTS
+    int arr[] = {50, 12, 1, 32, 11, 18, 4, 3};
+    int TargetElem = 12;
+
     int nArr = sizeof(arr) / sizeof(arr[0]);
-        
-    if (nArr > 0)
+
+    BST *pBST = BST::CreateInstance();
+    if (pBST)
     {
-        BST* pRoot = nullptr;
+        Node *pRoot = nullptr;
+
+        // 1) Create BST from the array
         for (int idx = 0; idx < nArr; idx++)
+            pBST->InsertNode(pRoot, arr[idx], idx);
+
+        // 2) Print all data in BST
+        if (nArr && pRoot)
+            pBST->Inorder(pRoot);
+
+        // 3) Find the element in BST and get the index
+        if (pRoot)
         {
-            // BST stores elements in sorted order
-            pRoot = pRoot->Insert(pRoot, arr[idx], idx);
+            cout << "Element " << TargetElem << " is at: ";
+            cout << pBST->FindElement(TargetElem, pRoot) << endl;
         }
-        
-        // Print the sorted elements using tree traversal
-        pRoot->Inorder(pRoot);  // In-Order tree traversal
-
-        int iElemIdx = -1;
-        int ElemToSearch = 32;
-        if (pRoot->FindElement(iElemIdx, pRoot, ElemToSearch))
-            cout << "Element Found: " << iElemIdx << endl;
     }
-
-    return 0;
 }
