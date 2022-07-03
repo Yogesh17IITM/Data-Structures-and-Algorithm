@@ -11,6 +11,9 @@
 
         Triplet with sum 0 : {-13, 6, 7}
 
+Note:
+    'Balanced BST' -> (Height_left_subtree) ~ (Height_Right_subtree) <= 1
+
 Approach:
     1) Convert BST into array (sorted)
     2) Check if any triplet exists based on two pointer approach
