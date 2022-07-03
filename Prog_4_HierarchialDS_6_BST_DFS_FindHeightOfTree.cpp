@@ -1,7 +1,7 @@
 /*
 Find the height of the Binary tree?
 
-		   3
+           3
         /     \
       2        5
     /        /   \
@@ -13,14 +13,14 @@ Output:
     3
 */
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 struct Node
 {
-	int _data;
-	Node* _pLeft;
-	Node* _pRight;
+    int _data;
+    Node *_pLeft;
+    Node *_pRight;
 
     Node(int iData) : _data(iData)
     {
@@ -31,11 +31,11 @@ struct Node
 class DFS
 {
 public:
-    void CreateBST(Node*& ipNode, int iData);
-    int FindHeight(Node * ipNode);
+    void CreateBST(Node *&ipNode, int iData);
+    int FindHeight(Node *ipNode);
 };
 
-void DFS::CreateBST(Node *& ipNode, int iData)
+void DFS::CreateBST(Node *&ipNode, int iData)
 {
     if (nullptr == ipNode)
     {
@@ -48,23 +48,24 @@ void DFS::CreateBST(Node *& ipNode, int iData)
             CreateBST(ipNode->_pLeft, iData);
         }
         else
-        { 
+        {
             CreateBST(ipNode->_pRight, iData);
         }
     }
 }
 
-int DFS::FindHeight(Node* ipNode)
+int DFS::FindHeight(Node *ipNode)
 {
     int LeftHeight = 0;
     int RightHeight = 0;
 
-    if (ipNode->_pLeft)
+    // similar to post-order traveral (Left-Right-Data)
+    if (ipNode && ipNode->_pLeft)
     {
         LeftHeight = 1 + FindHeight(ipNode->_pLeft);
     }
 
-    if (ipNode->_pRight)
+    if (ipNode && ipNode->_pRight)
     {
         RightHeight = 1 + FindHeight(ipNode->_pRight);
     }
@@ -74,9 +75,9 @@ int DFS::FindHeight(Node* ipNode)
 
 int main()
 {
-    Node* pNode = nullptr;
+    Node *pNode = nullptr;
 
-    DFS * pDFS = nullptr;
+    DFS *pDFS = nullptr;
     pDFS->CreateBST(pNode, 3);
     if (pNode)
     {
@@ -87,8 +88,8 @@ int main()
         pDFS->CreateBST(pNode, 6);
         pDFS->CreateBST(pNode, 7);
 
-        cout << "Height: "<<pDFS->FindHeight(pNode) << endl;
+        cout << "Height: " << pDFS->FindHeight(pNode) << endl;
     }
 
-	return 0;
+    return 0;
 }
