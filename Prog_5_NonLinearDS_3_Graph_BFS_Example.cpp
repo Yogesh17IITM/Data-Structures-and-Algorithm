@@ -9,6 +9,7 @@
     (Directed graph)
 
     Print all the connected nodes for the given key
+    (take, key = 2)
 */
 
 #include <iostream>
@@ -103,14 +104,16 @@ int main()
     g.AddEdges(2, 3);
     g.AddEdges(3, 4);
 
+    int key = 2;
+
     // Print all the connected nodes of given vertex using BFS
-    g.BFS(2);
+    g.BFS(key);
 
     // Connect the following edge and try again
     cout << "---------------------" << endl;
     g.ResetFlag();
     g.AddEdges(2, 0); // result changes due to directed graph (0->2 is NOT same as 2 -> 0)
-    g.BFS(2);
+    g.BFS(key);
 
     return 0;
 }

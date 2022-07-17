@@ -40,10 +40,10 @@ Graph::Graph(int iNbVertices) : _NbVertices(iNbVertices)
 Graph::~Graph()
 {
     if (_AdjMatrix)
-        delete _AdjMatrix;
+        delete[] _AdjMatrix;
 
     if (_bIsVisited)
-        delete _bIsVisited;
+        delete[] _bIsVisited;
 }
 
 // Connect adjacent nodes through edges.
