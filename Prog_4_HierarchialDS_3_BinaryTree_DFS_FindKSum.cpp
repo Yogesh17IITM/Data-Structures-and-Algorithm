@@ -71,7 +71,7 @@ void Tree::PrintKSumPath(Node *ipRoot, int k)
     if (!ipRoot)
         return;
 
-    // Inorder Traversal : DLR (Data-Left-Right)    // O(n)
+    // Preorder Traversal : DLR (Data-Left-Right)    // O(n)
     _vPath.push_back(ipRoot->_data);
     PrintKSumPath(ipRoot->_pLeft, k);
     PrintKSumPath(ipRoot->_pRight, k);

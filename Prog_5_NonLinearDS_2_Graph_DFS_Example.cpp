@@ -6,6 +6,7 @@
       \      |
        4 --- 3
 
+    Print all the connected nodes
 */
 
 #include <iostream>
@@ -38,6 +39,11 @@ Graph::Graph(int iNbVertices) : _NbVertices(iNbVertices)
 
 Graph::~Graph()
 {
+    if (_AdjMatrix)
+        delete _AdjMatrix;
+
+    if (_bIsVisited)
+        delete _bIsVisited;
 }
 
 // Connect adjacent nodes through edges.
@@ -69,7 +75,7 @@ int main()
     g.AddEdges(2, 3);
     g.AddEdges(4, 3);
 
-    // DFS starting from index 0
+    // DFS : print all nodes starting from index 0
     g.DFS();
 
     return 0;
