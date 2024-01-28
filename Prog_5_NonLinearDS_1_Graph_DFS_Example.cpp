@@ -26,6 +26,7 @@ Output:
 
 #include <iostream>
 #include <vector>
+#include <queue>
 using namespace std;
 
 class Graph
@@ -35,6 +36,8 @@ class Graph
     bool *_bIsVisited = nullptr;
 
     void DFS(int &ioMinElem, int iArr[], int iCurrIdx);
+
+    void BFS(int &ioMinElem, int iArr[], int iCurrIdx);
 
 public:
     Graph(int iNbNodes);
@@ -86,6 +89,27 @@ void Graph::DFS(int &ioMinElem, int iArr[], int iCurrIdx)
     }
 }
 
+void Graph::BFS(int &ioMinElem, int iArr[], int iCurrIdx)
+{
+    // BFS
+    queue<int> q;
+    q.push(iCurrIdx);
+    while (!q.empty())
+    {
+        int temp = q.front();
+        q.pop();
+        for (auto &adj : _pAdj[temp])
+        {
+            if (!_bIsVisited[adj])
+            {
+                _bIsVisited[adj] = true;
+                ioMinElem = min(ioMinElem, iArr[adj]);
+                q.push(adj);
+            }
+        }
+    }
+}
+
 int Graph::SumOfMinElem(int iArr[], int nArr)
 {
     int oSum = 0;
@@ -99,6 +123,9 @@ int Graph::SumOfMinElem(int iArr[], int nArr)
 
             int minElem = iArr[idx];
             DFS(minElem, iArr, idx); // for traversing to the connecting nodes
+
+            // Alternatively, use BFS algo
+            // BFS(minElem, iArr, idx);
 
             // Add-up the result
             oSum += minElem;
